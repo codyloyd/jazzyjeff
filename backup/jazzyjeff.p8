@@ -16,7 +16,7 @@ walk = {
 bomb_burn = {
   sprites = {49, 50, 49, 51, 49, 52, 53, 54, 55, 56},
   fr = 4,
-  loop = false
+  loop = true
 }
 
 coinspin = {
@@ -33,30 +33,22 @@ g = {
 
 sounds = {
   death = 30,
-  coin = 31,
-  bomb = 32
+  coin = 31
 }
 
-pickupbomb = {
-
+bomb = {
+  x = 40,
+  y = 40,
+  sprite = 49
 }
-
-bombs = {
-}
-
-boom = {
-}
-bomb_message = true
 function start_game()
-  bomb_message = true
   player = {
     x = 20,
     y = 20,
     sprite = 1,
     speed = 1.5,
     dead = false,
-    score = 0,
-    bombs = 1
+    score = 0
   }
 
   balls = {
@@ -69,18 +61,13 @@ function start_game()
     }
   }
 
-  coins = {
-    {
-      sprite = 33,
-      x = 8,
-      y = 8,
-      count = 1
-    }
+  coin = {
+    sprite = 33,
+    x = 8,
+    y = 8
   }
-  bomb_frame = g.frame + 30
   music(0,0,12)
   g.started = true
-  whiteframe = false
 end
 
 player_counter = 1
@@ -97,60 +84,30 @@ function animate_player(anim)
   end
 end
 
+coin_counter = 1
 function animate_coin(anim)
-  foreach(coins, function(coin)
-    if g.frame % anim.fr  == 0 then
-      coin.sprite = anim.sprites[coin.count]
-      coin.count += 1
-      if anim.loop then
-        if (coin.count > #anim.sprites) coin.count = 1
-      else
-        if (coin.count > #anim.sprites) coin.count = #anim.sprites
-      end
-    end
-  end)
-end
-
-bomb_counter = 1
-function animate_bomb(anim)
-  foreach(bombs, function(bomb)
-    if g.frame % anim.fr  == 0 then
-      bomb.sprite = anim.sprites[bomb_counter]
-      bomb_counter += 1
-      if (bomb_counter > #anim.sprites) then
-        bomb_counter = 1
-        screenshake_frame = g.frame + 8
-        sfx(sounds.bomb)
-        whiteframe = true
-        add(booms, create_boom(bomb.x, bomb.y, 20))
-        del(bombs,bomb)
-        destroy_balls(bomb.x, bomb.y)
-      end
-    end
-  end)
-end
-
-function destroy_balls(x,y)
-  for i=#balls, 1, -1 do
-    local ball = balls[i]
-    if ball.x > x - 30 and ball.x < x + 30 
-    and ball.y > y - 30 and ball.y < y + 30 
-    then
-      add(coins, {x = ball.x, y = ball.y, sprite = 33, count = 1})
-      del(balls, ball)
+  if g.frame % anim.fr  == 0 then
+    coin.sprite = anim.sprites[coin_counter]
+    coin_counter += 1
+    if anim.loop then
+      if (coin_counter > #anim.sprites) coin_counter = 1
+    else
+      if (coin_counter > #anim.sprites) coin_counter = #anim.sprites
     end
   end
 end
 
-bomb_frame = 0
-function create_bomb(x,y)
-  bomb_frame = g.frame + 60
-  player.bombs -= 1
-  add(bombs, {
-    x = x,
-    y = y,
-    sprite = 49
-  })
+bomb_counter = 1
+function animate_bomb(anim)
+  if g.frame % anim.fr  == 0 then
+    bomb.sprite = anim.sprites[bomb_counter]
+    bomb_counter += 1
+    if anim.loop then
+      if (bomb_counter > #anim.sprites) bomb_counter = 1
+    else
+      if (bomb_counter > #anim.sprites) bomb_counter = #anim.sprites
+    end
+  end
 end
 
 function move_player()
@@ -224,7 +181,6 @@ function collide_ball()
       player.dead = true
       sfx(sounds.death)
       screenshake_frame = g.frame + 26
-      whiteframe = true
       screenshake = true
       if player.score > highscore then
         dset(0, player.score)
@@ -235,25 +191,18 @@ end
 
 screenshake_frame = 0
 function collect_coin()
-  foreach(coins, function(coin)
     if coin.x + 8 > player.x and coin.x < player.x + 8 and 
      coin.y + 8 > player.y and coin.y < player.y + 8 then
        player.score += 15
-      del(coins, coin)
-      if #coins < 1 then
-        add(coins, {
-          x = ((rnd(120) + 8 + player.x) % 110) + 4,
-          y = ((rnd(120) + 8 + player.y) % 110) + 4,
-          sprite = 33,
-          count = 1
-        })
-      end
+      coin.x = ((rnd(120) + 8 + player.x) % 110) + 4
+      coin.y = ((rnd(120) + 8 + player.y) % 110) + 4
       sfx(sounds.coin)
-      if (player.score % 30 == 0) then
+      if (player.score % 30 == 0 and player.score < 200) or 
+          player.score % 60 == 0
+      then
         add(balls, create_ball())
       end
     end
-  end)
 end
 
 function create_ball()
@@ -266,75 +215,6 @@ function create_ball()
   }
 end
 
-function create_boom(x,y,r,pl)
- local b={}
- b.x=x
- b.y=y
- b.r=r
- b.p=0
- b.c= (rnd(2)+9) * flr(rnd(2))
- if pl then b.pl=true end
- add(boom,b)
-end
-
-function update_booms()
- for b in all(boom) do
-  b.p+=1
-  
-  if b.p==2 then
-   for i=1,flr(b.r/2) do
-    create_boom(b.x+rnd(b.r*2)-b.r,
-                b.y+rnd(b.r*2)-b.r,
-                rnd(b.r/2)+b.r/4,
-                b.pl)
-   end
-  end
-  
-  if b.p==3 then
-   del(boom,b)
-  end
- end
-end
-
-function draw_boom()
-  foreach(boom, function(b)
-    circfill(b.x,b.y,b.r,b.c)
-  end)
-end
-
-function drop_bomb()
-  add(pickupbomb, {
-    x = rnd(100) + 10,
-    y = rnd(100) + 10,
-    xx = .25,
-    yy = .25
-  })
-end
-
-function move_pickup_bombs()
-  foreach(pickupbomb, function(b)
-    if b.x + 8 > player.x and b.x < player.x + 8 and 
-      b.y + 8 > player.y and b.y < player.y + 8 then
-      del(pickupbomb, b)
-      player.bombs += 1
-    end
-    b.x += b.xx
-    b.y += b.yy
-    if b.x < 0 then
-      b.xx = -b.xx
-    end
-    if b.y < 0 then
-      b.yy = -b.yy
-    end
-    if b.x > 120 then
-      b.xx = -b.xx
-    end
-    if b.y > 120 then
-      b.yy = -b.yy
-    end
-  end)
-end
-
 function _init()
   cartdata("jazzyjeff")
   dset(0, 0)
@@ -343,23 +223,14 @@ function _init()
 end
 
 function _update()
-  update_booms()
   if (not g.started or player.dead)and btn(5) then
    start_game()
   end
   if (not g.started) return
   g.frame += 1
-  if g.frame % 900 == 0 and player.bombs < 3 then
-    drop_bomb()
-  end
-  if btn(5) and player.bombs > 0 and bomb_frame < g.frame then
-    bomb_message = false
-    create_bomb(player.x, player.y)
-  end
   screen_shake()
   animate_coin(coinspin)
   animate_bomb(bomb_burn)
-  move_pickup_bombs()
   move_player()
   move_ball()
   bounce_ball()
@@ -381,7 +252,7 @@ end
 
 function screen_shake()
   if screenshake_frame > g.frame then
-    camera(rnd(3)-2,rnd(3)-2)
+    camera(flr(rnd(3)-2),flr(rnd(3)-2))
   else
     camera()
   end
@@ -397,30 +268,14 @@ function _draw()
     return
   end
 
-  print(player.score, 2, 2, 7)
-  for i=player.bombs,1,-1 do 
-    spr(48, 6 + (i*8), 0)
-  end
-  if (bomb_message) print_outline("< press x to set bomb!", 28, 2 , 7, 8)
+  print(player.score, 0, 0, 7)
   spr(player.sprite, player.x, player.y)
-  foreach(coins, function(coin)
-    spr(coin.sprite, coin.x, coin.y)
-  end)
-  foreach(bombs, function(bomb)
-    spr(bomb.sprite, bomb.x, bomb.y)
-  end)
+  spr(coin.sprite, coin.x, coin.y)
+  spr(bomb.sprite, bomb.x, bomb.y)
   foreach(balls, function(ball)
     spr(ball.sprite,ball.x, ball.y)
   end)
-  foreach(pickupbomb, function(bomb)
-    spr(48 ,bomb.x, bomb.y)
-  end)
-  draw_boom()
-  if whiteframe then
-    rectfill(0,0,127,127,7)
-    whiteframe=false
-    return
-  end
+
   if player.dead then
     highscore = dget(0)
     print_outline("ha ha.. you died", 32, 64, 7, 8)
@@ -455,13 +310,13 @@ __gfx__
 0000000009aa90000099000000900000000000000000000000000000000900000099000000000000000770000000000000000000000000000000000000000000
 00000000009900000000000000000000000000000000000000000000000000000000000000000000000700000000077770000000000000000000000000000000
 00000000000009a0000090a0000007a9000009000000070900009000000007000000000000000000000700077777070000000000000000000000000000000000
-00000066000000600000006900000060000000a0000090a0000000a0000900a00000000000000000000700070000077770000000000000000000000000000000
-000086000000860700008607000086090000860000008600000086090000860000008a9000000770007700070000070007777000000000000000000000000000
-000e8800000e8800000e8800000e8800000e8800000e8800000e8800000e8809000e880000000770007000077770070007000000000000000000000000000000
-00e8200000e8200000e8200000e8200000e8200000e8200000e8200700e8200000e8200000000070077000070000070007000000000000000000000000000000
-0e8200000e8200000e8200000e8200000e8200000e8200000e8200000e8200000e82000000000070070000070000000007777000000000000000000000000000
-88200000882000008820000088200000882000008820000088200000882000008820000000000007770000077777000007000000000000000000000000000000
-28000000280000002800000028000000280000002800000028000000280000002800000000000007700000000000000007000000000000000000000000000000
+00000000000000600000006900000060000000a0000090a0000000a0000900a00000000000000000000700070000077770000000000000000000000000000000
+000000000000860700008607000086090000860000008600000086090000860000008a9000000770007700070000070007777000000000000000000000000000
+00000000000e8800000e8800000e8800000e8800000e8800000e8800000e8809000e880000000770007000077770070007000000000000000000000000000000
+0000000000e8200000e8200000e8200000e8200000e8200000e8200700e8200000e8200000000070077000070000070007000000000000000000000000000000
+000000000e8200000e8200000e8200000e8200000e8200000e8200000e8200000e82000000000070070000070000000007777000000000000000000000000000
+00000000882000008820000088200000882000008820000088200000882000008820000000000007770000077777000007000000000000000000000000000000
+00000000280000002800000028000000280000002800000028000000280000002800000000000007700000000000000007000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -628,7 +483,7 @@ __sfx__
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 010400003925135051320512f2512d0512b0512725125051220511f2511f0511d2511b051192511805115251124511225116451100510e4510f0510c4510b6510a4510a4510865106651086510b651126511a651
 010200002b1402b1402b0003000030030300513005130041300413003130031300313003130021300213002130021300113001130011300113000130001300013000130001300013000130001300013000030000
-010400000107301073316732666323651216511f6411d6411c6411a64119631176311663114621136210d6210b6210a6210862108621066210661105611046110361102611016110160103601026010160102601
+001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
