@@ -1,10 +1,9 @@
-﻿<head>
+﻿<html>
+    <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Jazzy Jeff</title>
-				<meta name="description" content="">
-				<meta name="apple-mobile-web-app-capable" content="yes"> 
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PICO-8 Cartridge</title>
+        <meta name="description" content="">
 
 <STYLE TYPE="text/css">
 <!--
@@ -72,10 +71,21 @@ canvas{
 		var Module = {};
 		Module.canvas = canvas;
 		
+		/*
+			// When pico8_buttons is defined, PICO-8 takes each int to be a live bitfield
+			// representing the state of each player's buttons
+			
+			var pico8_buttons = [0, 0, 0, 0, 0, 0, 0, 0]; // max 8 players
+			pico8_buttons[0] = 2 | 16; // example: player 0, RIGHT and Z held down
+			
+			// when pico8_gpio is defined, reading and writing to gpio pins will
+			// read and write to these values
+			var pico8_gpio = new Array(128);
+		*/
 	</script>
 
 	<script async type="text/javascript" src="jazzyjeff.js"></script>
-
+	  
 	<script>
 		// key blocker. prevent cursor keys from scrolling page while playing cart.
 		
@@ -125,8 +135,7 @@ canvas{
 
 	</div></center>
 	<br><br>
-	<link rel="stylesheet" href="webcontroller.css">
-	<script src="webcontroller.js"></script>
+
 </body></html>
 
 

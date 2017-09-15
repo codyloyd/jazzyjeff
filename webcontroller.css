@@ -1,0 +1,42 @@
+#btns {
+  display:none;
+}
+
+@media (max-width: 512px) {
+  .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex:4; 
+    height: calc(100vh - 100vw);
+    background: white;
+  }
+  .xy {
+    flex: 5;
+    border-left: 1px solid black;
+  }
+  #btns {
+    display: flex;
+  }
+  
+  .pico8_el {
+    display: none;
+  }
+  
+  body {
+    margin: 0;
+  }
+  
+  body br {
+    display: none;
+  }
+  
+  center div[style] {
+    width: 100% !important;
+  }
+  
+  center > div > canvas#canvas {
+    width: 100vw;
+    height: 100vw;
+  }
+}
