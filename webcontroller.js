@@ -25,7 +25,6 @@ function addButton(button, text) {
     e.preventDefault()
     pico8_buttons[0] += map[button]
     const val = pico8_buttons[0].toString(2)
-    console.log(val)    
   })
   btn.addEventListener('touchend', (e) => {
     e.preventDefault()
@@ -33,7 +32,6 @@ function addButton(button, text) {
   })
   btn.addEventListener('touchmove', (e) => {
     e.preventDefault()
-    console.log(e)
   })
   butns.appendChild(btn)
 }
@@ -48,8 +46,12 @@ function addXY(button, text) {
   btn.addEventListener('touchstart', (e) => {
     e.preventDefault()
     const coords = e.target.getBoundingClientRect()
-    const x = e.pageX - (coords.left + coords.width/2)
-    const y = -(e.pageY - (coords.top + coords.height/2))
+    // const pageX = e.pageX
+    // const pageY = e.pageY
+    const pageX = e.changedTouches[0].pageX
+    const pageY = e.changedTouches[0].pageY
+    const x = pageX - (coords.left + coords.width/2)
+    const y = -(pageY - (coords.top + coords.height/2))
     if (Math.abs(x) > coords.width/2 || Math.abs(y) > coords.height/2) return;
     if (x > 20) {
       pico8_buttons[0] += map["right"]
@@ -76,8 +78,12 @@ function addXY(button, text) {
   btn.addEventListener('touchmove', (e) => {
     e.preventDefault()
     const coords = e.target.getBoundingClientRect()
-    const x = e.pageX - (coords.left + coords.width/2)
-    const y = -(e.pageY - (coords.top + coords.height/2))
+    // const pageX = e.pageX
+    // const pageY = e.pageY
+    const pageX = e.changedTouches[0].pageX
+    const pageY = e.changedTouches[0].pageY
+    const x = pageX - (coords.left + coords.width/2)
+    const y = -(pageY - (coords.top + coords.height/2))
     const btns = calculateButtons(pico8_buttons)
 
     //if move out of area
