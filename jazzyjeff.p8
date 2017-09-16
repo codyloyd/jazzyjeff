@@ -1,7 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 8
 __lua__
-cartdata(jazzyjeff)
+cartdata("jazzyjeff")
 
 death = {
   sprites = {1, 18, 19, 20, 21, 22},
