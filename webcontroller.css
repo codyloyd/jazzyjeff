@@ -9,12 +9,17 @@
     justify-content: center;
     flex:4; 
     height: calc(100vh - 100vw);
-    background: white;
+    background: black;
   }
   .xy {
     flex: 5;
     border-left: 1px solid black;
   }
+  
+  img {
+    width: 90%;
+  }
+
   #btns {
     display: flex;
   }

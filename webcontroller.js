@@ -18,7 +18,9 @@ document.querySelector('body').appendChild(container)
 function addButton(button, text) {
   const btn = document.createElement("div")
   btn.classList.add("button")
-  btn.textContent = text
+  const img = document.createElement("img")
+  img.src = "xz.png"
+  btn.appendChild(img)
   btn.addEventListener('touchstart', (e) => {
     e.preventDefault()
     pico8_buttons[0] += map[button]
@@ -40,7 +42,9 @@ function addXY(button, text) {
   const btn = document.createElement("div")
   btn.classList.add("button")
   btn.classList.add("xy")
-  btn.textContent = text
+  const img = document.createElement("img")
+  img.src = "dpad.png"
+  btn.appendChild(img)
   btn.addEventListener('touchstart', (e) => {
     e.preventDefault()
     const coords = e.target.getBoundingClientRect()
