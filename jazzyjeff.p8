@@ -1,6 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 8
 __lua__
+cartdata(jazzyjeff)
 
 death = {
   sprites = {1, 18, 19, 20, 21, 22},
@@ -47,6 +48,7 @@ bombs = {
 
 boom = {
 }
+
 bomb_message = true
 function start_game()
   bomb_message = true
@@ -337,8 +339,6 @@ function move_pickup_bombs()
 end
 
 function _init()
-  cartdata("jazzyjeff")
-  dset(0, 0)
   highscore = dget(0)
   music(8)
 end
