@@ -6,7 +6,8 @@ const map = {
   "up": 4,
   "down": 8,
   "z": 16,
-  "x": 32
+  "x": 32,
+  "p": 64
 }
 
 const container = document.createElement("div")
@@ -15,11 +16,32 @@ container.appendChild(butns)
 butns.id = "btns"
 document.querySelector('body').appendChild(container)
 
+function pauseButton() {
+  const container = document.createElement("div")
+  container.classList.add("pause_container")
+  const btn = document.createElement("div")
+  btn.classList.add("pause")
+  const img = document.createElement("img")
+  img.src = "pico-pause.png"
+  btn.appendChild(img)
+  btn.addEventListener("touchstart", (e)=>{
+    e.preventDefault()
+    pico8_buttons[0] += map["p"]
+    setTimeout(()=>{
+      pico8_buttons[0] -= map["p"]
+      console.log(pico8_buttons[0])
+    },100)
+    console.log(pico8_buttons[0])
+  })
+  container.appendChild(btn)
+  butns.appendChild(container)
+}
+
 function addButton(button, text) {
   const btn = document.createElement("div")
   btn.classList.add("button")
   const img = document.createElement("img")
-  img.src = "xz.png"
+  img.src = "pico-o-x.png"
   btn.appendChild(img)
   btn.addEventListener('touchstart', (e) => {
     e.preventDefault()
@@ -54,7 +76,7 @@ function addXY(button, text) {
   btn.classList.add("button")
   btn.classList.add("xy")
   const img = document.createElement("img")
-  img.src = "dpad.png"
+  img.src = "pico-dpad.png"
   btn.appendChild(img)
   btn.addEventListener('touchstart', (e) => {
     e.preventDefault()
@@ -151,6 +173,7 @@ function calculateButtons(picobtns) {
 }
 addXY("xy", "XY")
 addButton("x","X")
+pauseButton()
 
 
 
